@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        td[contenteditable="true"] {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        .remove-icon {
+            background: url({{ url_for('static', filename='remove-icon.png') }});
+            height: 20px;
+            width: 20px;
+        }
+    </style>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <button onclick="addRow()">Добавить сотрудника</button>
+    
+    <h2 style="text-align:center;">Job Table</h2>
+    <table id="employees">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Отчество</th>
+                <th>Должность</th>
+                <th>Дата найма</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person in people %}
+            <tr data-id="{{ person.id }}">
+                <td contenteditable="true" data-id="{{ person.id }}">{{ person.name }}</td>
+                <td contenteditable="true" data-id="{{ person.id }}">{{ person.surname }}</td>
+                <td contenteditable="true" data-id="{{ person.id }}">{{ person.patronymic }}</td>
+                <td contenteditable="true" data-id="{{ person.id }}">{{ person.job_status }}</td>
+                <td contenteditable="true" data-id="{{ person.id }}">{{ person.work_starts }}</td>
+                <td><button data-id="{{ person.id }}" onclick="deleteRow(this)"><img src="{{ url_for('static', filename='remove-icon.png') }}" alt="Remove Icon" width="30" height="30"></button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+table{
+    border-collapse: collapse;
+  border: 5px solid black;
+  border-radius: 10px;
+  
+};
+th{
+  border: 5px solid black;
+  border-radius: 10px
+};
+tr{
+  border: 5px solid black;
+  border-radius: 10px;
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <title>kortex</title>
+</head>
+<body>
+    <h1>Добро пожаловать в организацию</h1>
+   
+    
+    
+
+    <table>
+        <tr>
+            <th class='table-corder'>Фамилия </th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Должность в компании</th>
+            <th>Дата принятия на работу</th>
+    </table>
+    <div>Добавить сотрудника:</div><br>
+    <form>
+        <label for='Имя'>Имя:</label>
+        <input type="text" id="name" name="name" required minlength="2" maxlength="50" placeholder="Введите ваше имя">
+          <br><br>
+        <label for="famil">Фамилия:</label>
+          <input type="text" id="famil" name="famil" required placeholder="Введите вашу фамилию">
+          <br><br>
+        <label for="father">Отчество:</label>
+          <input type="text" id="father" name="father" required placeholder="Введите ваше отчество">
+          <br><br>
+        <label for="position">Должность:</label>
+          <input type="text" id="position" name="position" required placeholder="Введите вашу должность">
+          <br><br>
+        <input type="submit" value="Добавить сотрудника"
+        </form>
+
+    <p id="test">тестоове сообщение</p>
+    
+    <button onclick="sendData">кнопка делает брррр</button>
+    
+    
+    <script>
+        function sendData() { // Ошибка, функция не вызывается Попробуй так
+
+            
+            var value = document.getElementById('test').value;
+            
+            $.ajax({
+                url: '/process_data', 
+                type: 'POST',
+                contentType: 'application/json',// это я понял
+                data: JSON.stringify({ 'value': value }), // Ajax передает данные вместе с данными о их форме. Это кодирует их в Json. data: это ключ к данным
+                
+                success: function(response) { // Анонимная функция. Помнишь что такое lambda? Это тоже самое
+                    document.getElementById('output').innerHTML = response.result;
+                },
+                error: function(error) {
+                    console.log(error);// все остальное я понял
+                }
+            });
+        }
+    </script>
+
+
+
+</body>
+</html> 
+
