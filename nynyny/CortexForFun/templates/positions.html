@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Positions Table</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='positions_style.css') }}">
+  <script src="{{ url_for('static', filename='positions_script.js') }}"></script>
+</head>
+<body>
+  <a href="/">Вернуться</a>
+  <h2>Employee Positions</h2>
+
+  <button class="btn" onclick="createPosition()">Create Position</button>
+
+  <table id="positionsTable">
+    <thead>
+      <tr>
+        <th>Position Name</th>
+        <th>Department</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for position in positions %}
+      <tr data-id="{{ position.id }}">
+        <td contenteditable="true" data-id="{{ position.id }}">{{ position.Position_name }}</td>
+        <td contenteditable="true" data-id="{{ position.id }}">{{ position.Department }}</td>
+        <td><button data-id="{{ position.id }}" onclick="deletePosition(this)"><img src="{{ url_for('static', filename='remove-icon.png') }}" alt="Remove Icon" width="30" height="30"></button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <script>updateMaxID()</script>
+  </table>
+
+  <p id="statusMessage"></p>
+
+
+</body>
+</html>
