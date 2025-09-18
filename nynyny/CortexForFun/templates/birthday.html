@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поздравь коллегу от ИИ 🎉</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+            text-align: center;
+            padding: 50px 20px;
+            color: #333;
+            margin: 0;
+        }
+        h1 {
+            color: #4a6baf;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        p {
+            color: #555;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .form-group {
+            margin: 20px auto;
+            max-width: 500px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #4a6baf;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #a1c4fd;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #4a6baf;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        button:hover:not(:disabled) {
+            background-color: #3a568f;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4a6baf;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #result {
+            margin-top: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: 100px;
+            font-size: 18px;
+            line-height: 1.7;
+            text-align: left;
+            display: none;
+        }
+        footer {
+            margin-top: 60px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎉 Поздравь сотрудника с Днём Рождения!</h1>
+    <p>Введите имя и должность — нейросеть Qwen создаст тёплое и профессиональное поздравление.</p>
+
+    <div class="form-group">
+        <label for="name">Имя сотрудника:</label>
+        <input type="text" id="name" placeholder="Например: Мария">
+
+        <label for="position">Должность:</label>
+        <input type="text" id="position" placeholder="Например: менеджер проектов">
+    </div>
+
+    <button id="generateBtn">Поздравить сотрудника 🎂</button>
+
+    <div class="loader" id="loader"></div>
+    <div id="result"></div>
+
+    <footer>
+        Генерация с помощью <strong>Qwen1.5-4B-Instruct</strong> через Hugging Face API
+    </footer>
+
+    <script>
+        // 🔐 Замените на ваш токен: https://huggingface.co/settings/tokens
+        const API_TOKEN = 'YOUR_HUGGING_FACE_API_TOKEN';
+        const API_URL = 'https://api-inference.huggingface.co/models/Qwen/Qwen1.5-4B-Instruct';
+
+        const generateBtn = document.getElementById('generateBtn');
+        const resultDiv = document.getElementById('result');
+        const loader = document.getElementById('loader');
+
+        generateBtn.addEventListener('click', async () => {
+            const name = document.getElementById('name').value.trim();
+            const position = document.getElementById('position').value.trim();
+
+            if (!name) {
+                alert('Пожалуйста, введите имя сотрудника.');
+                return;
+            }
+
+            // Показываем лоадер
+            loader.style.display = 'block';
+            resultDiv.style.display = 'none';
+            generateBtn.disabled = true;
+
+            const prompt = 
+                "<|im_start|>system\n" +
+                "Ты — дружелюбный и профессиональный помощник. Отвечай на русском языке тепло, уважительно и с юмором, но в рамках рабочей этики.\n" +
+                "<|im_end|>\n" +
+                "<|im_start|>user\n" +
+                `Напиши тёплое и вдохновляющее поздравление с днём рождения для сотрудника по имени ${name}. ` +
+                (position ? `Он/она работает как ${position}. ` : '') +
+                `Подчеркни важность его/её вклада в команду. Сделай текст душевным, но профессиональным.` +
+                "<|im_end|>\n" +
+                "<|im_start|>assistant\n";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        inputs: prompt,
+                        parameters: {
+                            max_new_tokens: 200,
+                            temperature: 0.85,
+                            top_p: 0.9,
+                            do_sample: true,
+                            return_full_text: false,
+                            truncate: 1024
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `Ошибка: ${response.status}`);
+                }
+
+                const data = await response.json();
+                let text = data.generated_text || data[0]?.generated_text || 'Поздравление не сгенерировано.';
+
+                // Очистка ответа
+                text = text.replace(/<\|im_start\|>assistant\n?/i, '').trim();
+                text = text.replace(/<\|im_end\|>.*$/s, '').trim();
+
+                // Выводим результат
+                resultDiv.innerHTML = `<p>${text}</p>`;
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Ошибка генерации:', error);
+                resultDiv.innerHTML = `
+                    <p style="color: red;">
+                        <strong>Ошибка:</strong> ${error.message}<br><br>
+                        Убедитесь, что токен верный, или попробуйте позже.
+                    </p>`;
+                resultDiv.style.display = 'block';
+            } finally {
+                loader.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+</html>
